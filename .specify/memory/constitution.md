@@ -1,55 +1,55 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+<!-- SYNC IMPACT REPORT:
+Version change: N/A -> 1.0.0
+Modified principles: None (new constitution)
+Added sections: All sections
+Removed sections: None
+Templates requiring updates:
+  - .specify/templates/plan-template.md ✅ updated
+  - .specify/templates/spec-template.md ✅ updated
+  - .specify/templates/tasks-template.md ✅ updated
+  - .specify/templates/commands/*.md ✅ reviewed
+Follow-up TODOs: None
+-->
+# Hackathon Todo Constitution
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+### Spec-Driven Development (SDD)
+All development must follow strict Spec-Driven Development methodology: Specifications are written and validated before any implementation begins; All features must have corresponding specs in the `/specs` directory; Implementation must strictly follow the specs with no deviations without spec updates first.
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+### Production-Quality Code
+Every implementation must meet production-ready standards: Clean, well-documented code with proper error handling; Comprehensive testing including edge cases; Performance and security considerations built-in from the start.
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+### Full-Stack Integration (NON-NEGOTIABLE)
+Backend and frontend must be developed in tight coordination: API contracts defined in specs before implementation; End-to-end functionality tested together; Consistent data models across client and server.
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+### Modern UI/UX Excellence
+User interfaces must meet professional SaaS-grade standards: Responsive design using Tailwind CSS; Accessible UX patterns (loading states, empty states, error states); Smooth animations and transitions; Clean, modern SaaS design aesthetic.
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+### AI-First Architecture
+AI integration must be designed as a first-class citizen: MCP tools properly implemented and documented; Natural language understanding capabilities built-in; State management for conversations handled correctly; Error handling for AI interactions robust.
 
-### [PRINCIPLE_6_NAME]
+### Security-First Approach
+Security must be built into every layer: JWT authentication and authorization enforced; User data isolation guaranteed; Input validation and sanitization everywhere; Proper error handling that doesn't leak sensitive information.
 
+## Technical Standards
 
-[PRINCIPLE__DESCRIPTION]
+### Monorepo Structure
+All code must follow the specified monorepo structure: Backend in `/backend` directory using FastAPI; Frontend in `/frontend` directory using Next.js 16+; Specs organized in `/specs` with proper categorization; Clear separation of concerns maintained.
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+### Technology Stack Compliance
+Implementation must use the specified technology stack: FastAPI + SQLModel + Neon PostgreSQL for backend; Next.js 16+ + TypeScript + Tailwind CSS for frontend; Better Auth for authentication; OpenAI Agents SDK for AI components; MCP SDK for tool integration.
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+## Development Workflow
 
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
+### Spec Validation Process
+All development follows the spec-first workflow: Review existing specs for completeness; Create missing specs before coding; Validate specs against requirements; Implement only what's in the spec; Update specs if requirements change.
 
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+### Quality Assurance Requirements
+Code quality must meet strict standards: All code must be TypeScript with proper typing; Components must be reusable and well-documented; Error handling implemented for all edge cases; Performance considerations addressed upfront; Accessibility standards followed for all UI components.
 
 ## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+All development activities must comply with this constitution: Deviations require spec updates first; Code reviews must verify constitution compliance; New features must follow established patterns; Architectural decisions must align with stated principles; Version control must preserve spec-driven history.
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+**Version**: 1.0.0 | **Ratified**: 2026-01-20 | **Last Amended**: 2026-01-20

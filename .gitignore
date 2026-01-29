@@ -1,0 +1,84 @@
+# Dependencies
+node_modules/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+ENV/
+.venv/
+env.bak/
+venv.bak/
+.python-version
+
+# Build outputs
+.next/
+build/
+dist/
+*.egg-info/
+.nyc_output/
+coverage/
+
+# Logs
+*.log
+logs/
+app.log
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Python
+pip-log.txt
+pip-delete-this-directory.txt
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.db
+*.db-journal
+
+# Next.js
+.next/
+out/
+*.turbo
+
+# Database
+*.db
+*.db-journal
+
+# Local development files
+.env.local
+.env.production.local
+.env.development.local
+.env.test.local
+
+# IDE specific
+.vscode/settings.json
+.idea/workspace.xml
+*.tmproj
+nbproject/
