@@ -128,7 +128,7 @@ const TaskManager = ({ userId }: TaskManagerProps) => {
 
       const createdTask = await response.json();
       setTasks([...tasks, createdTask]);
-      setNewTask({ title: "", description: "", priority: "medium" });
+      setNewTask({ title: "", description: "", priority: "medium" as TaskPriority });
     } catch (err) {
       setError((err as Error).message);
     }
