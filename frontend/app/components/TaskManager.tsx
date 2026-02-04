@@ -25,7 +25,7 @@ const TaskManager = ({ userId }: TaskManagerProps) => {
 
     try {
       setLoading(true);
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000'}/api/${userId}/tasks`);
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'https://heckathon-2-phase-iii-todo-ai-chatb.vercel.app'}/api/${userId}/tasks`);
       if (!response.ok) throw new Error("Failed to fetch tasks");
       const data = await response.json();
       setTasks(data);
@@ -41,7 +41,7 @@ const TaskManager = ({ userId }: TaskManagerProps) => {
     if (!userId) return;
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000'}/api/${userId}/tasks`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'https://heckathon-2-phase-iii-todo-ai-chatb.vercel.app'}/api/${userId}/tasks`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -68,7 +68,7 @@ const TaskManager = ({ userId }: TaskManagerProps) => {
     if (!editingTask || !userId) return;
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000'}/api/${userId}/tasks/${editingTask.id}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'https://heckathon-2-phase-iii-todo-ai-chatb.vercel.app'}/api/${userId}/tasks/${editingTask.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -95,7 +95,7 @@ const TaskManager = ({ userId }: TaskManagerProps) => {
     if (!userId) return;
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000'}/api/${userId}/tasks/${task.id}/complete`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'https://heckathon-2-phase-iii-todo-ai-chatb.vercel.app'}/api/${userId}/tasks/${task.id}/complete`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -119,7 +119,7 @@ const TaskManager = ({ userId }: TaskManagerProps) => {
     if (!userId) return;
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000'}/api/${userId}/tasks/${taskId}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'https://heckathon-2-phase-iii-todo-ai-chatb.vercel.app'}/api/${userId}/tasks/${taskId}`, {
         method: "DELETE",
         headers: {
           "Authorization": `Bearer ${localStorage.getItem("accessToken")}`,

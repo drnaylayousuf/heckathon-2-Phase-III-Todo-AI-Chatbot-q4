@@ -47,7 +47,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 
       // Get user info
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000'}/api/me`);
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'https://nayla-yousuf-123-todo-app-chatbot-phase3.hf.space'}/api/me`);
       setUser(response.data);
     } catch (error) {
       // Token is invalid, clear it
@@ -65,7 +65,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       formData.append('username', email);
       formData.append('password', password);
 
-      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000'}/api/login`,
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'https://nayla-yousuf-123-todo-app-chatbot-phase3.hf.space'}/api/login`,
         formData,
         {
           headers: {
@@ -81,7 +81,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
 
       // Get user info
-      const userInfoResponse = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000'}/api/me`);
+      const userInfoResponse = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'https://nayla-yousuf-123-todo-app-chatbot-phase3.hf.space'}/api/me`);
       setUser(userInfoResponse.data);
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -99,7 +99,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signUp = async (email: string, password: string, name?: string) => {
     try {
-      await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000'}/api/register`, {
+      await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'https://nayla-yousuf-123-todo-app-chatbot-phase3.hf.space'}/api/register`, {
         email,
         password,
         name,

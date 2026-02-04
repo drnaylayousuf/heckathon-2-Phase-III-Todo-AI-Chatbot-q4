@@ -2,18 +2,19 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-# Install system dependencies
+# Install system dependencies needed for psycopg compilation
 RUN apt-get update && apt-get install -y \
     gcc \
+    g++ \
+    libpq-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy requirements first to leverage Docker cache
-COPY requirements.txt requirements-dev.txt ./
+COPY requirements.txt ./
 
-# Install Python dependencies
+# Install Python dependencies (only production dependencies for Hugging Face)
 RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt && \
-    pip install --no-cache-dir -r requirements-dev.txt
+    pip install --no-cache-dir -r requirements.txt
 
 # Copy the rest of the application
 COPY . .

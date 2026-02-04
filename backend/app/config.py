@@ -22,7 +22,7 @@ class Settings(BaseSettings):
     access_token_expire_minutes: int = 30
 
     # CORS settings
-    allowed_origins_str: str = Field(default="http://localhost:3000,http://127.0.0.1:3000", alias="ALLOWED_ORIGINS")
+    allowed_origins_str: str = Field(default="http://localhost:3000,http://127.0.0.1:3000,https://heckathon-2-phase-iii-todo-ai-chatb.vercel.app", alias="ALLOWED_ORIGINS")
 
     @property
     def allowed_origins(self) -> List[str]:

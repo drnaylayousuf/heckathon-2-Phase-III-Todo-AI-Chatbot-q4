@@ -45,7 +45,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 
       // Get user info
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000'}/api/auth/me`);
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'https://nayla-yousuf-123-todo-app-chatbot-phase3.hf.space'}/api/auth/me`);
       setUser(response.data);
     } catch (error) {
       // Token is invalid, clear it
@@ -58,7 +58,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signIn = async (email: string, password: string) => {
     try {
-      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000'}/api/auth/login`, {
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'https://nayla-yousuf-123-todo-app-chatbot-phase3.hf.space'}/api/auth/login`, {
         username: email,
         password: password,
       });
@@ -70,7 +70,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
 
       // Get user info
-      const userInfoResponse = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000'}/api/auth/me`);
+      const userInfoResponse = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'https://nayla-yousuf-123-todo-app-chatbot-phase3.hf.space'}/api/auth/me`);
       setUser(userInfoResponse.data);
     } catch (error) {
       throw new Error("Invalid credentials");
@@ -85,7 +85,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signUp = async (email: string, password: string, name?: string) => {
     try {
-      await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000'}/api/auth/register`, {
+      await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'https://nayla-yousuf-123-todo-app-chatbot-phase3.hf.space'}/api/auth/register`, {
         email,
         password,
         name,
