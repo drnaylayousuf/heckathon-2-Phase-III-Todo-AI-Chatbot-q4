@@ -2,11 +2,13 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-# Install system dependencies needed for psycopg compilation
+# Install system dependencies needed for PostgreSQL/psycopg compilation
 RUN apt-get update && apt-get install -y \
     gcc \
     g++ \
     libpq-dev \
+    postgresql-client \
+    python3-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy requirements first to leverage Docker cache

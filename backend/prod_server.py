@@ -6,7 +6,16 @@ Compatible with deployment platforms like Hugging Face Spaces, Render, etc.
 
 import uvicorn
 import os
+import sys
+import signal
+import time
 from app.config import settings
+
+
+def signal_handler(sig, frame):
+    """Handle graceful shutdown"""
+    print("\nReceived interrupt signal. Shutting down gracefully...")
+    sys.exit(0)
 
 
 def main():
@@ -27,6 +36,21 @@ def main():
                 db_url = f"{protocol}://{masked_creds}@{endpoint}"
     print(f"Database: {db_url}")
 
+    # Import and initialize database here to catch any database errors early
+    try:
+        from app.database.session import engine
+        print("Database engine initialized successfully")
+
+        # Test database connection
+        from sqlalchemy import text
+        with engine.connect() as conn:
+            result = conn.execute(text("SELECT 1"))
+            print("Database connection test successful!")
+
+    except Exception as e:
+        print(f"FATAL: Database connection failed: {e}")
+        raise
+
     # Use PORT environment variable if available (for Heroku, Hugging Face, etc.)
     port = int(os.environ.get("PORT", 8000))
     host = os.environ.get("HOST", "0.0.0.0")  # Bind to all interfaces for cloud deployment
@@ -34,13 +58,27 @@ def main():
     print(f"Serving on {host}:{port}")
     print("-" * 50)
 
-    uvicorn.run(
-        "app.main:app",
-        host=host,
-        port=port,
-        reload=False,  # Disable reload in production
-        log_level="info"
-    )
+    # Register signal handler for graceful shutdown
+    signal.signal(signal.SIGINT, signal_handler)
+    signal.signal(signal.SIGTERM, signal_handler)
+
+    try:
+        uvicorn.run(
+            "app.main:app",
+            host=host,
+            port=port,
+            reload=False,  # Disable reload in production
+            log_level="info",
+            timeout_keep_alive=300,  # Increase keep-alive timeout for slow connections
+            timeout_graceful_shutdown=10,  # Graceful shutdown timeout
+            workers=1,  # Use single worker for Hugging Face compatibility
+            lifespan="on"  # Enable lifespan events
+        )
+    except KeyboardInterrupt:
+        print("Server stopped by user")
+    except Exception as e:
+        print(f"Server error: {e}")
+        raise
 
 
 if __name__ == "__main__":
