@@ -21,12 +21,14 @@ class Settings(BaseSettings):
     algorithm: str = "HS256"
     access_token_expire_minutes: int = 30
 
-    # CORS settings
-    allowed_origins_str: str = Field(default="http://localhost:3000,http://127.0.0.1:3000,https://heckathon-2-phase-iii-todo-ai-chatbot-q4-2e8rpoks1.vercel.app", alias="ALLOWED_ORIGINS")
+    # CORS settings - Allow all for troubleshooting
+    allowed_origins_str: str = Field(default="*", alias="ALLOWED_ORIGINS")
 
     @property
     def allowed_origins(self) -> List[str]:
         """Convert the comma-separated string to a list of origins."""
+        if self.allowed_origins_str == "*":
+            return ["*"]  # Allow all origins
         return [origin.strip() for origin in self.allowed_origins_str.split(",")]
 
     # Rate limiting

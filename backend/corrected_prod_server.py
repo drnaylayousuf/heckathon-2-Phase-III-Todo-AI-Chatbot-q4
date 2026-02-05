@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 """
-Production server runner for the Hackathon Todo API
-Compatible with deployment platforms like Hugging Face Spaces, Render, etc.
+Corrected production server runner for the Hackathon Todo API
+This version will stay running properly
 """
 
 import uvicorn
 import os
+import sys
+import time
 from app.config import settings
 
 
@@ -27,9 +29,6 @@ def main():
                 db_url = f"{protocol}://{masked_creds}@{endpoint}"
     print(f"Database: {db_url}")
 
-    # Defer database initialization to application startup event
-    print("Deferring database initialization to app startup...")
-
     # Use PORT environment variable if available (for Heroku, Hugging Face, etc.)
     port = int(os.environ.get("PORT", 8000))
     host = os.environ.get("HOST", "0.0.0.0")  # Bind to all interfaces for cloud deployment
@@ -39,32 +38,29 @@ def main():
     print("Server is now ready to accept requests...")
 
     # Run uvicorn server - this should block and keep the process alive indefinitely
-    # The server will run until manually stopped
-    import sys
     try:
+        print("Starting Uvicorn server...")
         uvicorn.run(
             "app.main:app",
             host=host,
             port=port,
-            reload=False,  # Disable reload in production
+            reload=False,
             log_level="info",
-            access_log=True,  # Enable access logging to see requests
-            timeout_keep_alive=300,  # Increase keep-alive timeout for slow connections
-            workers=1,  # Use single worker for Hugging Face compatibility
-            lifespan="on"  # Enable lifespan events
+            access_log=True,
+            timeout_keep_alive=300,
+            workers=1,
+            lifespan="on"
         )
+        print("Uvicorn server stopped")
     except KeyboardInterrupt:
-        print("Server stopped by user")
+        print("Server interrupted by user")
     except Exception as e:
         print(f"Server error: {e}")
         import traceback
         traceback.print_exc()
+        # Don't exit - let the platform handle it
     finally:
-        print("Server process ending...")
-        # Don't exit the process - let the platform manage it
-        import time
-        # Keep process alive briefly to allow proper cleanup
-        time.sleep(1)
+        print("Server process completed")
 
 
 if __name__ == "__main__":
