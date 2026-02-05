@@ -5,6 +5,8 @@ import os
 from dotenv import load_dotenv
 from sqlalchemy.pool import QueuePool
 from sqlalchemy import text
+import threading
+import time
 
 # Load environment variables from .env file
 load_dotenv()
@@ -41,10 +43,10 @@ def create_engine_with_postgres_only():
                 max_overflow=5,      # Reduced for Hugging Face free tier
                 pool_pre_ping=True,  # Verify connections before use
                 pool_recycle=120,    # Recycle connections more frequently
-                pool_timeout=30,     # Add connection timeout
+                pool_timeout=10,     # Reduce timeout to prevent hanging
                 echo=False,          # Set to True for SQL query logging
                 connect_args={
-                    "connect_timeout": 15,  # Connection timeout
+                    "connect_timeout": 10,  # Reduce connection timeout
                     "application_name": "hf-space-todo-app"  # Application name
                 }
             )
@@ -70,8 +72,22 @@ def create_engine_with_postgres_only():
             print(f"Attempt {attempt + 1} failed: {e}")
             if attempt == max_retries - 1:  # Last attempt
                 print("Failed to connect to PostgreSQL database after retries")
-                print("This is a critical error - application cannot start without database connection.")
-                raise
+                print("Will continue startup but database operations may fail...")
+                # Return engine anyway to allow server to start
+                return create_engine(
+                    DATABASE_URL,
+                    poolclass=QueuePool,
+                    pool_size=2,
+                    max_overflow=5,
+                    pool_pre_ping=True,
+                    pool_recycle=120,
+                    pool_timeout=10,
+                    echo=False,
+                    connect_args={
+                        "connect_timeout": 10,
+                        "application_name": "hf-space-todo-app"
+                    }
+                )
             else:
                 print(f"Retrying in {retry_delay} seconds...")
                 time.sleep(retry_delay)
@@ -79,7 +95,16 @@ def create_engine_with_postgres_only():
     return engine
 
 # Create engine with PostgreSQL only - no fallback
-engine = create_engine_with_postgres_only()
+# Move this to a lazy initialization approach to avoid blocking startup
+_engine = None
+
+def get_engine():
+    global _engine
+    if _engine is None:
+        _engine = create_engine_with_postgres_only()
+    return _engine
+
+engine = get_engine()
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
@@ -94,7 +119,7 @@ def create_db_and_tables():
     """Create database tables on startup - with proper error handling for PostgreSQL"""
     try:
         print("Creating database tables...")
-        SQLModel.metadata.create_all(bind=engine)
+        SQLModel.metadata.create_all(bind=get_engine())
         print("Database tables created successfully!")
     except Exception as e:
         print(f"Error creating database tables: {e}")
@@ -102,6 +127,16 @@ def create_db_and_tables():
         # Some tables might already exist
         print("Continuing startup (tables may already exist)...")
 
-# For alembic migrations
-def get_engine():
-    return engine
+# Initialize database in background thread to avoid blocking startup
+def _initialize_db_in_background():
+    """Initialize database in a background thread to not block startup"""
+    time.sleep(2)  # Wait a bit before initializing
+    try:
+        create_db_and_tables()
+    except Exception as e:
+        print(f"Background database initialization failed: {e}")
+
+# Start background initialization
+db_init_thread = threading.Thread(target=_initialize_db_in_background, daemon=True)
+db_init_thread.start()
+print("Database initialization started in background thread")

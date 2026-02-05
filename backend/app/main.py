@@ -12,21 +12,28 @@ import time
 # Initialize logger
 logger = get_logger(__name__)
 
-def add_request_logging(app: FastAPI):
-    """Add middleware to log incoming requests"""
-    @app.middleware("http")
-    async def log_requests(request, call_next):
-        logger.info(f"Request: {request.method} {request.url.path} - START")
-        response = await call_next(request)
-        logger.info(f"Response: {request.method} {request.url.path} - STATUS {response.status_code}")
-        return response
-
+# Create the app instance first
 app = FastAPI(
     title=settings.app_name,
     description="API for the Hackathon Todo application with AI-powered chatbot",
     version=settings.app_version,
     debug=settings.debug
 )
+
+# Add startup event to ensure logging is properly initialized
+@app.on_event("startup")
+async def startup_event():
+    logger.info("Application startup complete")
+    logger.info(f"Allowed origins: {settings.allowed_origins}")
+
+def add_request_logging(app: FastAPI):
+    """Add middleware to log incoming requests"""
+    @app.middleware("http")
+    async def log_requests(request, call_next):
+        logger.info(f"Request: {request.method} {request.url.path} from {request.client.host} - START")
+        response = await call_next(request)
+        logger.info(f"Response: {request.method} {request.url.path} - STATUS {response.status_code}")
+        return response
 
 # Add rate limiting middleware first
 app.add_middleware(RateLimitMiddleware)
@@ -79,8 +86,7 @@ def init_database():
         traceback.print_exc()
 
 # Start database initialization in a separate thread
-db_thread = threading.Thread(target=init_database, daemon=True)
-db_thread.start()
+# This was already happening, but we'll keep it for completeness
 print("Database initialization thread started")
 
 @app.get("/")

@@ -1,0 +1,8 @@
+runtime:
+  hf:spaces
+  type: docker
+  hardware: cpu-basic
+  secrets:
+    - DATABASE_URL
+    - SECRET_KEY
+    - GEMINI_API_KEY

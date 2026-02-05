@@ -53,7 +53,7 @@ const ChatInterface = ({ userId }: ChatInterfaceProps) => {
 
     try {
       // Send message to backend
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'https://heckathon-2-phase-iii-todo-ai-chatb.vercel.app'}/api/${userId}/chat`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'https://nayla-yousuf-123-todo-app-chatbot-phase3.hf.space'}/api/${userId}/chat`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

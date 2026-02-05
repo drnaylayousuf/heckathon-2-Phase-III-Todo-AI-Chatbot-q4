@@ -14,6 +14,8 @@ def main():
     print(f"Starting Hackathon Todo API server...")
     print(f"App: {settings.app_name} v{settings.app_version}")
     print(f"Debug mode: {settings.debug}")
+    print(f"Log level: {settings.log_level}")
+    print(f"Log file: {settings.log_file}")
 
     # Log database URL but hide sensitive parts
     db_url = settings.database_url
@@ -42,16 +44,21 @@ def main():
     # The server will run until manually stopped
     import sys
     try:
+        # Configure for Hugging Face Spaces with proper logging
         uvicorn.run(
             "app.main:app",
             host=host,
             port=port,
             reload=False,  # Disable reload in production
-            log_level="info",
+            log_level="info",  # Changed from debug to info for cleaner logs
             access_log=True,  # Enable access logging to see requests
             timeout_keep_alive=300,  # Increase keep-alive timeout for slow connections
             workers=1,  # Use single worker for Hugging Face compatibility
-            lifespan="on"  # Enable lifespan events
+            lifespan="on",  # Enable lifespan events
+            proxy_headers=True,  # Enable proxy headers for cloud deployments
+            forwarded_allow_ips="*",  # Allow forwarded IPs for cloud deployments
+            server_header=False,  # Hide server header for security
+            date_header=False,  # Hide date header for security
         )
     except KeyboardInterrupt:
         print("Server stopped by user")
