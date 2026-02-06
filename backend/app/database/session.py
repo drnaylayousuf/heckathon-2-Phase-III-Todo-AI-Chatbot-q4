@@ -5,108 +5,46 @@ import os
 from dotenv import load_dotenv
 from sqlalchemy.pool import QueuePool
 from sqlalchemy import text
-import threading
-import time
+import logging
 
 # Load environment variables from .env file
 load_dotenv()
 
 DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://neondb_owner:npg_LCGQ75XgEVTw@ep-summer-frog-ah5snk5j-pooler.c-3.us-east-1.aws.neon.tech/neondb?sslmode=require")
 
-def create_engine_with_postgres_only():
-    """Create SQLAlchemy engine with PostgreSQL only - no fallback to SQLite"""
-    from sqlmodel import create_engine
-    import time
-
-    # Extract and mask the database URL for logging
-    db_url_display = DATABASE_URL
-    if "://" in db_url_display and "@" in db_url_display:
-        protocol, rest = db_url_display.split("://", 1)
-        creds, endpoint = rest.split("@", 1)
-        if ":" in creds:
-            user, pwd = creds.split(":", 1)
-            masked_creds = f"{user}:***"
-            db_url_display = f"{protocol}://{masked_creds}@{endpoint}"
-
-    print(f"Attempting to connect to PostgreSQL database: {db_url_display}")
-
-    # Retry mechanism for connection
-    max_retries = 3
-    retry_delay = 2
-
-    for attempt in range(max_retries):
-        try:
-            engine = create_engine(
-                DATABASE_URL,
-                poolclass=QueuePool,
-                pool_size=2,         # Reduced for Hugging Face free tier
-                max_overflow=5,      # Reduced for Hugging Face free tier
-                pool_pre_ping=True,  # Verify connections before use
-                pool_recycle=120,    # Recycle connections more frequently
-                pool_timeout=10,     # Reduce timeout to prevent hanging
-                echo=False,          # Set to True for SQL query logging
-                connect_args={
-                    "connect_timeout": 10,  # Reduce connection timeout
-                    "application_name": "hf-space-todo-app"  # Application name
-                }
-            )
-
-            # Test the connection
-            from sqlalchemy import text
-            with engine.connect() as conn:
-                result = conn.execute(text("SELECT 1"))
-                print("Successfully connected to PostgreSQL database!")
-                break  # Success, exit retry loop
-        except ImportError as e:
-            print(f"FATAL ERROR: PostgreSQL driver not available: {e}")
-            print("Please ensure psycopg2-binary is installed in your environment.")
-            raise
-        except ModuleNotFoundError as e:
-            if "psycopg2" in str(e):
-                print(f"FATAL ERROR: PostgreSQL driver not available: {e}")
-                print("Please ensure psycopg2-binary is installed in your environment.")
-                raise
-            else:
-                raise
-        except Exception as e:
-            print(f"Attempt {attempt + 1} failed: {e}")
-            if attempt == max_retries - 1:  # Last attempt
-                print("Failed to connect to PostgreSQL database after retries")
-                print("Will continue startup but database operations may fail...")
-                # Return engine anyway to allow server to start
-                return create_engine(
-                    DATABASE_URL,
-                    poolclass=QueuePool,
-                    pool_size=2,
-                    max_overflow=5,
-                    pool_pre_ping=True,
-                    pool_recycle=120,
-                    pool_timeout=10,
-                    echo=False,
-                    connect_args={
-                        "connect_timeout": 10,
-                        "application_name": "hf-space-todo-app"
-                    }
-                )
-            else:
-                print(f"Retrying in {retry_delay} seconds...")
-                time.sleep(retry_delay)
-
-    return engine
-
-# Create engine with PostgreSQL only - no fallback
-# Move this to a lazy initialization approach to avoid blocking startup
+# Global variable to hold the engine
 _engine = None
 
 def get_engine():
+    """Lazy load the database engine to avoid blocking startup"""
     global _engine
     if _engine is None:
-        _engine = create_engine_with_postgres_only()
+        print("Initializing database engine...")
+        from sqlmodel import create_engine
+
+        # Create engine with optimized settings for cloud deployment
+        _engine = create_engine(
+            DATABASE_URL,
+            poolclass=QueuePool,
+            pool_size=5,  # Increased pool size for better concurrent handling
+            max_overflow=10,  # Allow more overflow connections
+            pool_pre_ping=True,  # Verify connections before use
+            pool_recycle=300,  # Recycle connections every 5 minutes
+            pool_timeout=30,  # Increase timeout for busy connections
+            echo=False,  # Disable SQL logging for performance
+            connect_args={
+                "connect_timeout": 10,  # Increase timeout for slow connections
+                "application_name": "hf-fast-app",
+                "keepalives_idle": 600,  # Keep idle connections alive
+                "keepalives_interval": 30,
+                "keepalives_count": 5
+            }
+        )
+        print("Database engine initialized")
     return _engine
 
-engine = get_engine()
-
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+# Create session maker - will use the lazy-loaded engine
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=get_engine())
 
 def get_session():
     session = SessionLocal()
@@ -116,27 +54,16 @@ def get_session():
         session.close()
 
 def create_db_and_tables():
-    """Create database tables on startup - with proper error handling for PostgreSQL"""
+    """Create database tables if needed"""
     try:
         print("Creating database tables...")
-        SQLModel.metadata.create_all(bind=get_engine())
+        engine = get_engine()
+        # Ensure all models are imported before creating tables
+        from app.models.user import User
+        from app.models.task import Task
+        from app.models.conversation import Conversation, ConversationMessage
+        SQLModel.metadata.create_all(bind=engine)
         print("Database tables created successfully!")
     except Exception as e:
         print(f"Error creating database tables: {e}")
-        # Don't raise here as it might prevent the server from starting
-        # Some tables might already exist
-        print("Continuing startup (tables may already exist)...")
-
-# Initialize database in background thread to avoid blocking startup
-def _initialize_db_in_background():
-    """Initialize database in a background thread to not block startup"""
-    time.sleep(2)  # Wait a bit before initializing
-    try:
-        create_db_and_tables()
-    except Exception as e:
-        print(f"Background database initialization failed: {e}")
-
-# Start background initialization
-db_init_thread = threading.Thread(target=_initialize_db_in_background, daemon=True)
-db_init_thread.start()
-print("Database initialization started in background thread")
+        print("Continuing startup...")

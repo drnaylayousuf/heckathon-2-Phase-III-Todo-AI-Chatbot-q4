@@ -19,6 +19,8 @@ class GeminiService:
 
     def __init__(self):
         self.api_key = settings.gemini_api_key
+        self.model = None
+
         if self.api_key and self.api_key != "your-gemini-api-key-here":
             try:
                 genai.configure(api_key=self.api_key)
@@ -40,7 +42,8 @@ class GeminiService:
                             self.model = genai.GenerativeModel(fallback_model)
                             logger.info(f"Fallback: Gemini AI service initialized with model: {fallback_model}")
                             break
-                        except:
+                        except Exception as fallback_error:
+                            logger.warning(f"Fallback model '{fallback_model}' also failed: {str(fallback_error)[:100]}...")
                             continue
 
                     if self.model is None:

@@ -58,13 +58,26 @@ const TaskManager = ({ userId }: TaskManagerProps) => {
     try {
       setLoading(true);
 
+      // Determine the API base URL dynamically
+      const getApiBaseUrl = () => {
+        if (process.env.NEXT_PUBLIC_API_BASE_URL) {
+          return process.env.NEXT_PUBLIC_API_BASE_URL;
+        }
+        if (typeof window !== 'undefined' && window.location.hostname.includes('localhost')) {
+          return 'http://127.0.0.1:8000';
+        }
+        return 'https://nayla-yousuf-123-todo-app-chatbot-phase3.hf.space';
+      };
+
+      const apiBaseUrl = getApiBaseUrl();
+
       // Test the connection first
-      const testResponse = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'https://nayla-yousuf-123-todo-app-chatbot-phase3.hf.space'}/health`);
+      const testResponse = await fetch(`${apiBaseUrl}/health`);
       if (!testResponse.ok) {
         throw new Error("Cannot reach the API server");
       }
 
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'https://nayla-yousuf-123-todo-app-chatbot-phase3.hf.space'}/api/${actualUserId}/tasks`, {
+      const response = await fetch(`${apiBaseUrl}/api/${actualUserId}/tasks`, {
         headers: {
           "Authorization": `Bearer ${token}`,
           "Content-Type": "application/json",
@@ -107,8 +120,20 @@ const TaskManager = ({ userId }: TaskManagerProps) => {
     }
 
     try {
+      // Determine the API base URL dynamically
+      const getApiBaseUrl = () => {
+        if (process.env.NEXT_PUBLIC_API_BASE_URL) {
+          return process.env.NEXT_PUBLIC_API_BASE_URL;
+        }
+        if (typeof window !== 'undefined' && window.location.hostname.includes('localhost')) {
+          return 'http://127.0.0.1:8000';
+        }
+        return 'https://nayla-yousuf-123-todo-app-chatbot-phase3.hf.space';
+      };
+
+      const apiBaseUrl = getApiBaseUrl();
       const accessToken = localStorage.getItem("accessToken");
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'https://nayla-yousuf-123-todo-app-chatbot-phase3.hf.space'}/api/${actualUserId}/tasks`, {
+      const response = await fetch(`${apiBaseUrl}/api/${actualUserId}/tasks`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -143,8 +168,20 @@ const TaskManager = ({ userId }: TaskManagerProps) => {
     }
 
     try {
+      // Determine the API base URL dynamically
+      const getApiBaseUrl = () => {
+        if (process.env.NEXT_PUBLIC_API_BASE_URL) {
+          return process.env.NEXT_PUBLIC_API_BASE_URL;
+        }
+        if (typeof window !== 'undefined' && window.location.hostname.includes('localhost')) {
+          return 'http://127.0.0.1:8000';
+        }
+        return 'https://nayla-yousuf-123-todo-app-chatbot-phase3.hf.space';
+      };
+
+      const apiBaseUrl = getApiBaseUrl();
       const accessToken = localStorage.getItem("accessToken");
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'https://nayla-yousuf-123-todo-app-chatbot-phase3.hf.space'}/api/${actualUserId}/tasks/${editingTask.id}`, {
+      const response = await fetch(`${apiBaseUrl}/api/${actualUserId}/tasks/${editingTask.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -178,8 +215,20 @@ const TaskManager = ({ userId }: TaskManagerProps) => {
     }
 
     try {
+      // Determine the API base URL dynamically
+      const getApiBaseUrl = () => {
+        if (process.env.NEXT_PUBLIC_API_BASE_URL) {
+          return process.env.NEXT_PUBLIC_API_BASE_URL;
+        }
+        if (typeof window !== 'undefined' && window.location.hostname.includes('localhost')) {
+          return 'http://127.0.0.1:8000';
+        }
+        return 'https://nayla-yousuf-123-todo-app-chatbot-phase3.hf.space';
+      };
+
+      const apiBaseUrl = getApiBaseUrl();
       const accessToken = localStorage.getItem("accessToken");
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'https://nayla-yousuf-123-todo-app-chatbot-phase3.hf.space'}/api/${actualUserId}/tasks/${task.id}/complete`, {
+      const response = await fetch(`${apiBaseUrl}/api/${actualUserId}/tasks/${task.id}/complete`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -210,8 +259,20 @@ const TaskManager = ({ userId }: TaskManagerProps) => {
     }
 
     try {
+      // Determine the API base URL dynamically
+      const getApiBaseUrl = () => {
+        if (process.env.NEXT_PUBLIC_API_BASE_URL) {
+          return process.env.NEXT_PUBLIC_API_BASE_URL;
+        }
+        if (typeof window !== 'undefined' && window.location.hostname.includes('localhost')) {
+          return 'http://127.0.0.1:8000';
+        }
+        return 'https://nayla-yousuf-123-todo-app-chatbot-phase3.hf.space';
+      };
+
+      const apiBaseUrl = getApiBaseUrl();
       const accessToken = localStorage.getItem("accessToken");
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'https://nayla-yousuf-123-todo-app-chatbot-phase3.hf.space'}/api/${actualUserId}/tasks/${taskId}`, {
+      const response = await fetch(`${apiBaseUrl}/api/${actualUserId}/tasks/${taskId}`, {
         method: "DELETE",
         headers: {
           "Authorization": `Bearer ${accessToken}`,

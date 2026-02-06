@@ -8,6 +8,7 @@ python-jose[cryptography]==3.3.0
 sqlalchemy==2.0.36
 asyncpg==0.30.0
 # PostgreSQL adapter - required for Neon database connection
+# Using psycopg2-binary which is precompiled and doesn't require build tools
 psycopg2-binary==2.9.9
 # Alternative if psycopg2-binary fails:
 # psycopg[binary]==3.1.18

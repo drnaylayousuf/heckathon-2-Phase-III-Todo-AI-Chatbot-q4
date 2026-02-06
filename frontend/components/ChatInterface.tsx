@@ -52,8 +52,21 @@ const ChatInterface = ({ userId }: ChatInterfaceProps) => {
     setIsLoading(true);
 
     try {
+      // Determine the API base URL dynamically
+      const getApiBaseUrl = () => {
+        if (process.env.NEXT_PUBLIC_API_BASE_URL) {
+          return process.env.NEXT_PUBLIC_API_BASE_URL;
+        }
+        if (typeof window !== 'undefined' && window.location.hostname.includes('localhost')) {
+          return 'http://127.0.0.1:8000';
+        }
+        return 'https://nayla-yousuf-123-todo-app-chatbot-phase3.hf.space';
+      };
+
+      const apiBaseUrl = getApiBaseUrl();
+
       // Send message to backend
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'https://nayla-yousuf-123-todo-app-chatbot-phase3.hf.space'}/api/${userId}/chat`, {
+      const response = await fetch(`${apiBaseUrl}/api/${userId}/chat`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

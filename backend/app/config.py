@@ -11,18 +11,18 @@ class Settings(BaseSettings):
     """
     Application settings loaded from environment variables
     """
-    # Database settings
+    # Database settings - this will use the environment variable if set, otherwise the default Neon DB
     database_url: str = Field(default="postgresql://neondb_owner:npg_LCGQ75XgEVTw@ep-summer-frog-ah5snk5j-pooler.c-3.us-east-1.aws.neon.tech/neondb?sslmode=require", alias="DATABASE_URL")
-    db_pool_size: int = 20
+    db_pool_size: int = 5  # Reduced for Hugging Face limitations
     db_pool_overflow: int = 10
 
     # Security settings
-    secret_key: str = "dev-secret-key-for-development-only-change-in-production"
+    secret_key: str = Field(default="dev-secret-key-for-development-only-change-in-production", alias="SECRET_KEY")
     algorithm: str = "HS256"
     access_token_expire_minutes: int = 30
 
     # CORS settings - Use the origins from environment variable
-    allowed_origins_str: str = Field(default="http://localhost:3000,http://127.0.0.1:3000,https://heckathon-2-phase-iii-todo-ai-chatb.vercel.app,https://nayla-yousuf-123-todo-app-chatbot-phase3.hf.space", alias="ALLOWED_ORIGINS")
+    allowed_origins_str: str = Field(default="http://localhost:3000,http://127.0.0.1:3000,https://heckathon-2-phase-iii-todo-ai-chatbot-q4-23bdahaht.vercel.app,https://nayla-yousuf-123-todo-app-chatbot-phase3.hf.space", alias="ALLOWED_ORIGINS")
 
     @property
     def allowed_origins(self) -> List[str]:

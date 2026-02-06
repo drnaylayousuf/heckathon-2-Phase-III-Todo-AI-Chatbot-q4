@@ -2,6 +2,13 @@ FROM python:3.10-slim
 
 WORKDIR /app
 
+# Install system dependencies for psycopg2
+RUN apt-get update && apt-get install -y \
+    gcc \
+    g++ \
+    postgresql-client \
+    && rm -rf /var/lib/apt/lists/*
+
 # Copy the backend requirements first
 COPY backend/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
@@ -11,6 +18,7 @@ COPY . .
 
 WORKDIR /app/backend
 
-EXPOSE 8000
+EXPOSE 7860
 
-CMD ["python", "-m", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Use the production server which handles Hugging Face deployment better
+CMD ["python", "/app/backend/prod_server.py"]
