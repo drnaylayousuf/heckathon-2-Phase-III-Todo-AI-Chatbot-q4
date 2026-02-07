@@ -71,17 +71,6 @@ def main():
         import time
         # Keep process alive briefly to allow proper cleanup
         time.sleep(1)
-    except KeyboardInterrupt:
-        print("Server stopped by user")
-    except Exception as e:
-        print(f"Server error: {e}")
-        import traceback
-        traceback.print_exc()
-    finally:
-        print("Server process ending...")
-        import time
-        # Keep process alive briefly to allow proper cleanup
-        time.sleep(1)
 
 
 if __name__ == "__main__":
